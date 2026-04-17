@@ -1,0 +1,247 @@
+SALA LIVRE API - RESUMO DO PROJETO
+
+1. REGRAS E EXIGÊNCIAS DO TRABALHO
+
+O projeto deve desenvolver uma API REST completa aplicando:
+- comunicação via HTTP
+- manipulação de JSON
+- separação de responsabilidades
+- regras de negócio reais
+
+Organização do trabalho:
+- trabalho em equipe
+- tema livre definido pelo grupo
+- entrega do código + defesa presencial
+
+Requisitos obrigatórios da aplicação:
+- uso de Controllers
+- separação em camadas
+  - Controllers
+  - Models
+  - Repository
+- CRUD mínimo para pelo menos uma entidade principal
+  - GET (listar todos)
+  - GET por ID
+  - POST (criar)
+  - PUT (atualizar)
+  - DELETE (remover)
+
+Uso de Java/JSON:
+- uso correto de classes e objetos
+- encapsulamento
+- construtores
+- collections (List, Set ou Map)
+- tratamento de exceções
+- pelo menos uma exceção personalizada
+- uso de biblioteca JSON (Jackson)
+- serialização (objeto para JSON)
+- desserialização (JSON para objeto)
+
+Regras de negócio:
+- a API precisa ter processamento real
+- não será aceito CRUD vazio sem lógica
+- exemplos esperados:
+  - cálculo
+  - validação
+  - classificação/status
+
+Persistência de dados:
+- uso obrigatório de banco de dados com JDBC
+- implementar ao menos 1 repositório com repository pattern
+- separar acesso a dados da lógica de negócio
+- fluxo esperado do projeto:
+  Controller -> Service -> Repository
+
+2. TEMA ESCOLHIDO PELO GRUPO
+
+Tema: Sistema de reserva de salas
+
+Motivo da escolha:
+- é um tema menos genérico
+- é simples de implementar
+- permite regras de negócio reais
+- atende bem ao requisito de duas entidades relacionadas
+
+3. ENTIDADES DO PROJETO
+
+Entidade 1: Sala
+Atributos planejados:
+- id
+- nome
+- bloco
+- capacidade
+- temProjetor
+- ativa
+
+Entidade 2: Reserva
+Atributos planejados:
+- id
+- nomeResponsavel
+- descricao
+- data
+- horaInicio
+- horaFim
+- status
+- salaId
+
+Relacionamento:
+- uma Sala pode ter várias Reservas
+- uma Reserva pertence a uma Sala
+
+4. REGRAS DE NEGÓCIO PLANEJADAS
+
+- não permitir reserva em horário já ocupado
+- validar que horaInicio seja menor que horaFim
+- limitar duração máxima da reserva
+- permitir reserva apenas em salas ativas
+- validar campos obrigatórios
+- classificar status da reserva
+
+Status planejados para reserva:
+- AGENDADA
+- EM_ANDAMENTO
+- FINALIZADA
+
+5. TECNOLOGIAS DEFINIDAS
+
+- Java 17
+- Spring Boot
+- Spring Web
+- JDBC
+- MySQL
+- Maven
+- Jackson
+
+6. ESTRUTURA DO PROJETO CRIADA
+
+Pacote base:
+- com.salalivre.api
+
+Camadas criadas:
+- config
+- controller
+- exception
+- model
+- repository
+- service
+
+Arquivos principais criados:
+- SalaLivreApiApplication.java
+- DatabaseConfig.java
+- SalaController.java
+- ReservaController.java
+- GlobalExceptionHandler.java
+- RecursoNaoEncontradoException.java
+- ReservaConflitanteException.java
+- Sala.java
+- Reserva.java
+- SalaRepository.java
+- ReservaRepository.java
+- SalaService.java
+- ReservaService.java
+- application.properties
+- schema.sql
+- pom.xml
+- README.md
+
+7. O QUE JÁ ESTÁ PRONTO ATÉ AQUI
+
+Estrutura e configuração:
+- estrutura de pastas criada corretamente
+- packages corrigidos
+- pom.xml configurado
+- aplicação Spring Boot iniciando corretamente
+- application.properties configurado
+- conexão com banco configurada
+- MySQL conectado com sucesso
+
+Banco de dados:
+- banco salalivre criado
+- tabela salas criada
+- tabela reservas criada
+- dados de teste inseridos na tabela salas
+
+Código já implementado:
+- classe principal da aplicação funcionando
+- model Sala implementada
+- repository Sala implementado com JDBC
+- service Sala implementado
+- controller Sala implementado
+
+Rota já funcionando:
+- GET /salas
+
+Resultado atual:
+- ao acessar http://localhost:8080/salas a API retorna as salas cadastradas em JSON
+
+8. O QUE AINDA FALTA FAZER
+
+Sala:
+- GET /salas/{id}
+- POST /salas
+- PUT /salas/{id}
+- DELETE /salas/{id}
+
+Reserva:
+- GET /reservas
+- GET /reservas/{id}
+- POST /reservas
+- PUT /reservas/{id}
+- DELETE /reservas/{id}
+
+Rotas extras planejadas:
+- GET /salas/{id}/reservas
+- GET /salas/disponiveis?data=...&horaInicio=...&horaFim=...
+
+Lógica de negócio:
+- validar conflito de horário
+- validar sala ativa
+- validar horários
+- calcular/classificar status da reserva
+- limitar duração máxima da reserva
+
+Tratamento de exceções:
+- implementar uso real de RecursoNaoEncontradoException
+- implementar uso real de ReservaConflitanteException
+- finalizar GlobalExceptionHandler
+
+Documentação e organização do grupo:
+- finalizar README com rotas e exemplos
+- documentar divisão dos integrantes
+- testar endpoints no Postman ou Insomnia
+- preparar apresentação/defesa
+
+9. DIVISÃO SUGERIDA ENTRE OS 5 INTEGRANTES
+
+Integrante 1:
+- configuração inicial
+- banco de dados
+- estrutura do projeto
+
+Integrante 2:
+- CRUD de Sala
+
+Integrante 3:
+- CRUD de Reserva
+
+Integrante 4:
+- regras de negócio
+- validações
+- exceções personalizadas
+
+Integrante 5:
+- README
+- documentação das rotas
+- testes e integração final
+
+10. SITUAÇÃO ATUAL DO PROJETO
+
+O projeto já possui uma base funcional e organizada.
+A aplicação sobe corretamente, conecta no MySQL e já responde a primeira rota real do sistema.
+
+Status atual resumido:
+- estrutura pronta
+- banco pronto
+- conexão pronta
+- primeira rota pronta
+- restante do CRUD e das regras de negócio ainda em desenvolvimento
