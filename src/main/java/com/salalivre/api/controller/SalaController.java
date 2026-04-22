@@ -2,9 +2,7 @@ package com.salalivre.api.controller;
 
 import com.salalivre.api.model.Sala;
 import com.salalivre.api.service.SalaService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,7 +17,28 @@ public class SalaController {
     }
 
     @GetMapping
-    public List<Sala> listarTodas() {
+    public List listarTodas() {
         return salaService.listarTodas();
+    }
+
+    @GetMapping("/{id}")
+    public Sala buscarPorId(@PathVariable Integer id) {
+        return salaService.buscarPorId(id);
+    }
+
+    @PostMapping
+    public Sala salvar(@RequestBody Sala sala) {
+        return salaService.salvar(sala);
+    }
+
+    @PutMapping("/{id}")
+    public Sala atualizar(@PathVariable Integer id, @RequestBody Sala sala) {
+        return salaService.atualizar(id, sala);
+    }
+
+    @DeleteMapping("/{id}")
+    public String deletar(@PathVariable Integer id) {
+        salaService.deletar(id);
+        return "Sala deletada com sucesso.";
     }
 }
