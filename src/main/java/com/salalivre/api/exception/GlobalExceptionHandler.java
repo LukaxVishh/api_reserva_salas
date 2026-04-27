@@ -25,6 +25,14 @@ public class GlobalExceptionHandler {
         return erro;
     }
 
+    @ExceptionHandler(ReservaConflitanteException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Map<String, String> tratarReservaConflitante(ReservaConflitanteException ex) {
+        Map<String, String> erro = new HashMap<>();
+        erro.put("erro", ex.getMessage());
+        return erro;
+    }
+
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Map<String, String> tratarErroGeral(RuntimeException ex) {
