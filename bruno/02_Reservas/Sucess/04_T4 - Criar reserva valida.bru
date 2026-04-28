@@ -1,0 +1,47 @@
+meta {
+  name: 04_T4 - Criar reserva valida
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/reservas
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "nomeResponsavel": "QA Tester",
+    "descricao": "Reserva de teste base",
+    "data": "{{dataAmanha}}",
+    "horaInicio": "14:00",
+    "horaFim": "16:00",
+    "salaId": {{salaAtivaId}}
+  }
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:8080
+  salaAtivaId: 1
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    bru.setEnvVar("reservaId", res.getBody().id);
+  }
+}
+
+tests {
+  test("T4: status 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  
+  test("status calculado = AGENDADA", function() {
+    expect(res.getBody().status).to.equal("AGENDADA");
+  });
+  
+  test("retornou id", function() {
+    expect(res.getBody()).to.have.property("id");
+  });
+}

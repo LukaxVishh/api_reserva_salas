@@ -1,0 +1,22 @@
+meta {
+  name: 02_Buscar por ID
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/reservas/{{reservaId}}
+  body: none
+  auth: none
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:8080
+  reservaId: 1
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

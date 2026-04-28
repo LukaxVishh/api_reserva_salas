@@ -1,0 +1,44 @@
+meta {
+  name: 12_T12 - Adjacencia exata
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/reservas
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "nomeResponsavel": "QA Adjacente",
+    "descricao": "16-18 adjacente a 14-16",
+    "data": "{{dataAmanha}}",
+    "horaInicio": "16:00",
+    "horaFim": "18:00",
+    "salaId": 2
+  }
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:8080
+  salaAtivaId: 2
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    bru.setEnvVar("reservaConflitoId", res.getBody().id);
+  }
+}
+
+tests {
+  test("T12: adjacencia exata -> 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+}
+
+docs {
+  T12: a regra de overlap usa < / > (não <= / >=), então 14-16 e 16-18
+  NÃO conflitam. Esperado: 201.
+}

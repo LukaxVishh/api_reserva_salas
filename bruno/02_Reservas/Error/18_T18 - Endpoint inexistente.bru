@@ -1,0 +1,46 @@
+meta {
+  name: 18_T18 - Endpoint inexistente
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/salas/disponiveis?data={{dataAmanha}}&horaInicio=14:00&horaFim=16:00
+  body: none
+  auth: none
+}
+
+params:query {
+  data: {{dataAmanha}}
+  horaInicio: 14:00
+  horaFim: 16:00
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:8080
+}
+
+tests {
+  test("rota cai em GET /salas/{id} com id nao numerico -> 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+  
+  test("resposta segue o padrao {erro: ...}", function() {
+    expect(res.getBody()).to.have.property("erro");
+  });
+  
+  test("mensagem nao vaza detalhes tecnicos", function() {
+    const msg = res.getBody().erro || "";
+    expect(msg).to.not.match(/Method parameter|java\.lang|Failed to convert/i);
+  });
+}
+
+docs {
+  README documenta GET /salas/disponiveis mas nao foi implementado.
+  Como o Spring tenta casar com GET /salas/{id} e converter
+  "disponiveis" para Integer, dispara MethodArgumentTypeMismatchException.
+  Apos o fix CR-1: 400 com {"erro":"Requisição inválida."}.
+  
+  Para resolver de fato (achado IM-1 do QA): implementar
+  GET /salas/disponiveis ou corrigir o README.
+}

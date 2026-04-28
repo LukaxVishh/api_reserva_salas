@@ -1,0 +1,60 @@
+meta {
+  name: 14_T14 - Update passado
+  type: http
+  seq: 1
+}
+
+put {
+  url: {{baseUrl}}/reservas/{{reservaId}}
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "nomeResponsavel": "QA Bug 2",
+    "descricao": "Apenas mudando descricao de uma reserva ja iniciada",
+    "data": "{{dataHoje}}",
+    "horaInicio": "{{horaPassada}}",
+    "horaFim": "{{horaFuturaFim}}",
+    "salaId": {{salaAtivaId}}
+  }
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:8080
+  reservaId: 1
+  salaAtivaId: 1
+}
+
+script:pre-request {
+  // Setup manual: reservaId deve apontar para uma reserva ja iniciada
+  // (data=hoje, horaInicio<now). Crie uma via POST antes de rodar este teste.
+}
+
+tests {
+  test("regra de negocio: reserva em curso nao pode ser editada -> 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+
+  test("mensagem explica a regra", function() {
+    expect(res.getBody().erro).to.match(/passad|horario|hora/i);
+  });
+}
+
+docs {
+  REGRA DE NEGOCIO (nao e bug):
+
+  Reservas com status EM_ANDAMENTO (intervalo [horaInicio, horaFim] contem now())
+  sao intencionalmente IMUTAVEIS - PUT e DELETE sao rejeitados.
+
+  Implementacao:
+    - validarReserva() em ReservaService rejeita PUT cujo horaInicio < now()
+    - deletar() em ReservaService rejeita DELETE de EM_ANDAMENTO
+
+  Combinado, isso protege toda reserva em curso ate o horaFim chegar. E feature
+  do dominio do projeto: "se a reserva ja comecou, nao se mexe nela".
+
+  Este teste documenta a regra como contrato observavel: PUT em reserva
+  iniciada deve responder 400 com mensagem que mencione horario/passado.
+}

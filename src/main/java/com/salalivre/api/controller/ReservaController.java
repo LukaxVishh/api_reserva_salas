@@ -2,6 +2,7 @@ package com.salalivre.api.controller;
 
 import com.salalivre.api.model.Reserva;
 import com.salalivre.api.service.ReservaService;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +33,7 @@ public class ReservaController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public Reserva salvar(@RequestBody Reserva reserva) {
         return reservaService.salvar(reserva);
     }
@@ -42,8 +44,8 @@ public class ReservaController {
     }
 
     @DeleteMapping("/{id}")
-    public String deletar(@PathVariable Integer id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deletar(@PathVariable Integer id) {
         reservaService.deletar(id);
-        return "Reserva deletada com sucesso.";
     }
 }

@@ -1,0 +1,41 @@
+meta {
+  name: 10_T10 - Conflito exato
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/reservas
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "nomeResponsavel": "QA Conflito",
+    "descricao": "Tentando duplicar 14-16",
+    "data": "{{dataAmanha}}",
+    "horaInicio": "14:00",
+    "horaFim": "16:00",
+    "salaId": {{salaAtivaId}}
+  }
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:8080
+  salaAtivaId: 1
+}
+
+tests {
+  test("T10: conflito exato -> 409", function() {
+    expect(res.getStatus()).to.equal(409);
+  });
+  
+  test("mensagem de conflito", function() {
+    expect(res.getBody().erro).to.match(/reserva/i);
+  });
+}
+
+docs {
+  Pré-requisito: T4 já executado (existe reserva 14-16 amanhã na salaAtivaId).
+}

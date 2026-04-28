@@ -1,0 +1,25 @@
+meta {
+  name: 07_T3 - Buscar inexistente
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/salas/999999
+  body: none
+  auth: none
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:8080
+}
+
+tests {
+  test("T3: id inexistente -> 404", function() {
+    expect(res.getStatus()).to.equal(404);
+  });
+  
+  test("body tem campo erro", function() {
+    expect(res.getBody()).to.have.property("erro");
+  });
+}

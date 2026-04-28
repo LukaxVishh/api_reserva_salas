@@ -1,0 +1,38 @@
+meta {
+  name: 19_Atualizar reserva
+  type: http
+  seq: 8
+}
+
+put {
+  url: {{baseUrl}}/reservas/{{reservaId}}
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "nomeResponsavel": "QA Renomeado",
+    "descricao": "Reserva atualizada",
+    "data": "{{dataAmanha}}",
+    "horaInicio": "10:00",
+    "horaFim": "11:30",
+    "salaId": {{salaAtivaId}}
+  }
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:8080
+  reservaId: 2
+  salaAtivaId: 1
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("horaInicio atualizada", function() {
+    expect(res.getBody().horaInicio).to.match(/^10:00/);
+  });
+}

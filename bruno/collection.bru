@@ -1,0 +1,48 @@
+auth {
+  mode: none
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+script:pre-request {
+  const now = new Date();
+  const tomorrow = new Date(now);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  const fmt = (d) => d.toISOString().split("T")[0];
+
+  bru.setVar("dataHoje", fmt(now));
+  bru.setVar("dataAmanha", fmt(tomorrow));
+  bru.setVar("dataOntem", fmt(yesterday));
+
+  const horaAtual = now.getHours();
+  bru.setVar("horaPassada", String(Math.max(0, horaAtual - 1)).padStart(2, "0") + ":00");
+  bru.setVar("horaFuturaInicio", String(Math.min(22, horaAtual + 1)).padStart(2, "0") + ":00");
+  bru.setVar("horaFuturaFim", String(Math.min(23, horaAtual + 2)).padStart(2, "0") + ":00");
+}
+
+docs {
+  Collection da API SalaLivre.
+
+  Variáveis dinâmicas geradas em cada request:
+    dataHoje, dataAmanha, dataOntem
+    horaPassada, horaFuturaInicio, horaFuturaFim
+
+  Variáveis de ambiente (Local.bru):
+    baseUrl              -> http://localhost:8080
+    salaAtivaId          -> setado após "Criar sala valida (T1)"
+    salaInativaId        -> setado após "Criar sala inativa"
+    reservaId            -> setado após "Criar reserva valida (T4)"
+    reservaConflitoId    -> setado após "Setup conflito"
+
+  Ordem sugerida para rodar a collection inteira:
+    1. 01_Salas/03_Criar sala valida (T1)
+    2. 01_Salas/08_Criar sala inativa (suporte)
+    3. 02_Reservas/04_T4 - Criar reserva valida
+    4. demais testes em ordem
+}

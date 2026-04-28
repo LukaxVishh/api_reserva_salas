@@ -1,0 +1,33 @@
+meta {
+  name: 11_T11 - Conflito sobreposicao
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/reservas
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "nomeResponsavel": "QA Sobreposicao",
+    "descricao": "15-17 sobrepoe 14-16",
+    "data": "{{dataAmanha}}",
+    "horaInicio": "15:00",
+    "horaFim": "17:00",
+    "salaId": {{salaAtivaId}}
+  }
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:8080
+  salaAtivaId: 1
+}
+
+tests {
+  test("T11: sobreposicao -> 409", function() {
+    expect(res.getStatus()).to.equal(409);
+  });
+}

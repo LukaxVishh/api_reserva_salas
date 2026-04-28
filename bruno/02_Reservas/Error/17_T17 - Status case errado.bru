@@ -1,0 +1,50 @@
+meta {
+  name: 17_T17 - Status case errado
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/reservas
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "nomeResponsavel": "QA Status",
+    "descricao": "Forçando case errado",
+    "data": "{{dataAmanha}}",
+    "horaInicio": "20:00",
+    "horaFim": "21:00",
+    "status": "agendada",
+    "salaId": {{salaAtivaId}}
+  }
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:8080
+  salaAtivaId: 1
+}
+
+tests {
+  test("status invalido -> 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+
+  test("resposta segue o padrao {erro: ...}", function() {
+    expect(res.getBody()).to.have.property("erro");
+  });
+
+  test("mensagem nao vaza detalhes tecnicos", function() {
+    const msg = res.getBody().erro || "";
+    expect(msg).to.not.match(/com\.salalivre|StatusReserva|Cannot deserialize|JSON parse|Enum class/i);
+  });
+}
+
+docs {
+  Cobre o caminho de erro do Jackson ao desserializar StatusReserva
+  com case incorreto. Apos o fix CR-1 do GlobalExceptionHandler,
+  HttpMessageNotReadableException -> 400 com {"erro":"Requisição inválida."}
+  sem vazamento de stack/pacote/classe.
+}

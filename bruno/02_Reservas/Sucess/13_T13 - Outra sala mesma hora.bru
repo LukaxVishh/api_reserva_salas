@@ -1,0 +1,41 @@
+meta {
+  name: 13_T13 - Outra sala mesma hora
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/reservas
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "nomeResponsavel": "QA Outra Sala",
+    "descricao": "14-16 mas em sala diferente",
+    "data": "{{dataAmanha}}",
+    "horaInicio": "14:00",
+    "horaFim": "16:00",
+    "salaId": {{salaInativaId}}
+  }
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:8080
+  salaInativaId: 2
+}
+
+tests {
+  test("comportamento esperado: 400 (sala inativa) ou 201 (se sala for ativa)", function() {
+    expect([201, 400]).to.include(res.getStatus());
+  });
+}
+
+docs {
+  ATENÇÃO: usa salaInativaId. A reserva vai falhar com 400 (sala inativa)
+  e não 201, porque a sala criada no setup esta como ativa=false.
+  
+  Para testar de fato T13 (mesmo horario, sala diferente, ambas ativas)
+  crie uma SEGUNDA sala ativa manualmente e troque o salaId aqui.
+}

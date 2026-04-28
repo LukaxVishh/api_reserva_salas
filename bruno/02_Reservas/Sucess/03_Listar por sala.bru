@@ -1,0 +1,32 @@
+meta {
+  name: 03_Listar por sala
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/reservas/sala/{{salaAtivaId}}
+  body: none
+  auth: none
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:8080
+  salaAtivaId: 1
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("retorna array", function() {
+    expect(res.getBody()).to.be.an("array");
+  });
+}
+
+docs {
+  ATENÇÃO: o README do projeto documenta este endpoint como
+  GET /salas/{id}/reservas, mas a implementação real é
+  GET /reservas/sala/{salaId}. Achado #6 do relatório QA.
+}

@@ -1,0 +1,37 @@
+meta {
+  name: 08_T8 - Duracao maior que 4h
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/reservas
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "nomeResponsavel": "QA",
+    "descricao": "Reserva muito longa",
+    "data": "{{dataAmanha}}",
+    "horaInicio": "09:00",
+    "horaFim": "14:00",
+    "salaId": {{salaAtivaId}}
+  }
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:8080
+  salaAtivaId: 1
+}
+
+tests {
+  test("T8: duracao > 4h -> 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+  
+  test("mensagem fala em duracao", function() {
+    expect(res.getBody().erro).to.match(/dura/i);
+  });
+}

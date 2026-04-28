@@ -2,6 +2,7 @@ package com.salalivre.api.controller;
 
 import com.salalivre.api.model.Sala;
 import com.salalivre.api.service.SalaService;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class SalaController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public Sala salvar(@RequestBody Sala sala) {
         return salaService.salvar(sala);
     }
@@ -37,8 +39,8 @@ public class SalaController {
     }
 
     @DeleteMapping("/{id}")
-    public String deletar(@PathVariable Integer id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deletar(@PathVariable Integer id) {
         salaService.deletar(id);
-        return "Sala deletada com sucesso.";
     }
 }

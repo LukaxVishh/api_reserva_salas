@@ -1,0 +1,42 @@
+meta {
+  name: 09_T9 - Sala inativa
+  type: http
+  seq: 13
+}
+
+post {
+  url: {{baseUrl}}/reservas
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "nomeResponsavel": "QA",
+    "descricao": "Tentando reservar sala inativa",
+    "data": "{{dataAmanha}}",
+    "horaInicio": "10:00",
+    "horaFim": "11:00",
+    "salaId": {{salaInativaId}}
+  }
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:8080
+  salaInativaId: 3
+}
+
+tests {
+  test("T9: sala inativa -> 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+  
+  test("mensagem fala em inativa", function() {
+    expect(res.getBody().erro).to.match(/inativa/i);
+  });
+}
+
+docs {
+  Pré-requisito: rodar 01_Salas/08_Criar sala inativa (suporte) antes,
+  para popular salaInativaId.
+}
