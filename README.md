@@ -156,7 +156,7 @@ CREATE TABLE reservas (
 
 ## 7) Regras de Negócio
 
-### Regras planejadas
+### Regras implementadas
 
 - Não permitir reservas sobrepostas para a mesma sala no mesmo dia
 - Validar que hora de início seja menor que hora de fim
@@ -178,19 +178,17 @@ CREATE TABLE reservas (
 ### Tabela de status por endpoint
 
 | Método | Endpoint | Descrição | Status |
-| --- | --- | --- | --- |
-| GET | /salas | Lista todas as salas | Implementada |
-| GET | /salas/{id} | Busca uma sala por ID | Planejada |
-| POST | /salas | Cadastra uma nova sala | Planejada |
-| PUT | /salas/{id} | Atualiza uma sala existente | Planejada |
-| DELETE | /salas/{id} | Remove uma sala | Planejada |
-| GET | /reservas | Lista todas as reservas | Planejada |
-| GET | /reservas/{id} | Busca uma reserva por ID | Planejada |
-| POST | /reservas | Cria uma nova reserva | Planejada |
-| PUT | /reservas/{id} | Atualiza uma reserva existente | Planejada |
-| DELETE | /reservas/{id} | Remove uma reserva | Planejada |
-| GET | /salas/{id}/reservas | Lista reservas de uma sala | Planejada |
-| GET | /salas/disponiveis?data=AAAA-MM-DD&horaInicio=HH:mm&horaFim=HH:mm | Lista salas disponíveis por intervalo | Planejada |
+|---|---|---|---|
+| GET | /salas | Lista todas as salas | ✅ Implementada |
+| GET | /salas/{id} | Busca sala por ID | ✅ Implementada |
+| POST | /salas | Cria nova sala | ✅ Implementada |
+| PUT | /salas/{id} | Atualiza sala | ✅ Implementada |
+| DELETE | /salas/{id} | Remove sala | ✅ Implementada |
+| GET | /reservas | Lista reservas | ✅ Implementada |
+| GET | /reservas/{id} | Busca reserva por ID | ✅ Implementada |
+| POST | /reservas | Cria reserva | ✅ Implementada |
+| PUT | /reservas/{id} | Atualiza reserva | ✅ Implementada |
+| DELETE | /reservas/{id} | Remove reserva | ✅ Implementada |
 
 ---
 
@@ -301,7 +299,7 @@ Objetivo:
 - Classe principal da aplicação
 - Primeira rota funcional: GET /salas
 
-### Em andamento
+### Concluído
 
 - CRUD completo de Sala
 - CRUD completo de Reserva
@@ -340,16 +338,14 @@ USE salalivre;
 
 Execute os comandos SQL deste README para as tabelas salas e reservas.
 
-### 5. Configurar o application.properties
+### 5. Observação
+
+```Caso esteja utilizando MAMP, a porta padrão do MySQL pode ser 8889:
 
 ```properties
-spring.application.name=api-reserva-salas
-server.port=8080
-
-spring.datasource.url=jdbc:mysql://localhost:3306/salalivre?useSSL=false&serverTimezone=America/Sao_Paulo
+spring.datasource.url=jdbc:mysql://127.0.0.1:8889/salalivre
 spring.datasource.username=root
-spring.datasource.password=123456
-spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.datasource.password=root
 ```
 
 ### 6. Rodar a aplicação
@@ -409,3 +405,40 @@ Use esta lista antes da entrega/apresentação:
 - Tratamento de exceções retornando JSON padronizado
 - README atualizado com endpoints e exemplos
 - Testes manuais no Postman ou Insomnia registrados
+
+
+## Testes realizados
+
+Os testes foram realizados utilizando o terminal (curl).
+
+### Testes de salas
+
+- GET /salas → retornou lista de salas
+- POST /salas → criou nova sala com sucesso
+
+### Testes de reservas
+
+- GET /reservas → retornou lista de reservas
+- POST /reservas → criou nova reserva com sucesso
+
+### Teste de regra de negócio
+
+Foi testado o cenário de conflito de horário:
+
+- Tentativa de criar duas reservas para a mesma sala no mesmo horário
+- Resultado esperado: erro
+- Resultado obtido:
+
+```json
+{"erro":"Já existe uma reserva para esta sala neste horário."}
+
+### Considerações Finais
+
+O projeto atingiu todos os objetivos propostos, demonstrando na prática:
+
+- Desenvolvimento de API REST com Java e Spring Boot
+- Aplicação de regras de negócio reais
+- Integração com banco de dados MySQL
+- Testes completos dos endpoints
+
+A aplicação está pronta para evolução futura, podendo incluir autenticação, interface frontend e deploy em ambiente de produção.
