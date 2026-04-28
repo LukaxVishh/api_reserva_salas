@@ -1,0 +1,56 @@
+services:
+  mysql:
+    image: docker.io/library/mysql:8.0
+    container_name: salalivre-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootroot
+      MYSQL_DATABASE: salalivre
+      TZ: America/Sao_Paulo
+    ports:
+      - "3306:3306"
+    volumes:
+      - salalivre-mysql-data:/var/lib/mysql
+      - ./db/init:/docker-entrypoint-initdb.d:ro,Z
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-prootroot", "--silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    networks:
+      - salalivre
+
+  api:
+    image: docker.io/library/maven:3.9-eclipse-temurin-17
+    container_name: salalivre-api
+    # Sem 'user:' de proposito. Em podman rootless, o root do container e
+    # mapeado para o user do host via userns -- arquivos criados em
+    # /workspace ficam com dono do host. Definir user:1000 quebra perms
+    # porque dentro do userns rootless o UID 1000 vira um subuid sem
+    # acesso ao bind mount.
+    working_dir: /workspace
+    volumes:
+      - .:/workspace:Z
+    environment:
+      # Cache do Maven dentro do projeto (./.m2). Gitignored.
+      MAVEN_OPTS: "-Dmaven.repo.local=/workspace/.m2"
+      # Sobrescreve o application.properties para apontar para o
+      # service mysql do compose (e nao localhost).
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/salalivre?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Sao_Paulo
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: rootroot
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    command: ["mvn", "spring-boot:run"]
+    networks:
+      - salalivre
+
+volumes:
+  salalivre-mysql-data:
+
+networks:
+  salalivre:
