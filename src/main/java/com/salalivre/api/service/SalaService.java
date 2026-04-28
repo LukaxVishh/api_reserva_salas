@@ -16,7 +16,7 @@ public class SalaService {
         this.salaRepository = salaRepository;
     }
 
-    public List listarTodas() {
+    public List<Sala> listarTodas() {
         return salaRepository.listarTodas();
     }
 

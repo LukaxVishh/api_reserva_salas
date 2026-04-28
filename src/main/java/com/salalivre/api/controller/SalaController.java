@@ -18,7 +18,7 @@ public class SalaController {
     }
 
     @GetMapping
-    public List listarTodas() {
+    public List<Sala> listarTodas() {
         return salaService.listarTodas();
     }
 

@@ -20,8 +20,8 @@ public class SalaRepository {
         this.connection = connection;
     }
 
-    public List listarTodas() {
-        List salas = new ArrayList<>();
+    public List<Sala> listarTodas() {
+        List<Sala> salas = new ArrayList<>();
         String sql = "SELECT * FROM salas";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql);
