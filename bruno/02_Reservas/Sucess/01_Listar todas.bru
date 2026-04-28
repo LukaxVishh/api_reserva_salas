@@ -1,0 +1,25 @@
+meta {
+  name: 01_Listar todas
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/reservas
+  body: none
+  auth: none
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:8080
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("retorna array", function() {
+    expect(res.getBody()).to.be.an("array");
+  });
+}

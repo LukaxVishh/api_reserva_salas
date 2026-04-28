@@ -1,0 +1,37 @@
+meta {
+  name: 06_T6 - HoraInicio igual HoraFim
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/reservas
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "nomeResponsavel": "QA",
+    "descricao": "Teste hora invalida",
+    "data": "{{dataAmanha}}",
+    "horaInicio": "14:00",
+    "horaFim": "14:00",
+    "salaId": {{salaAtivaId}}
+  }
+}
+
+vars:pre-request {
+  salaAtivaId: 1
+  baseUrl: http://localhost:8080
+}
+
+tests {
+  test("T6: horaInicio >= horaFim -> 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+  
+  test("mensagem fala em hora", function() {
+    expect(res.getBody().erro).to.match(/hora/i);
+  });
+}

@@ -1,0 +1,63 @@
+meta {
+  name: 14_T14 - Update passado
+  type: http
+  seq: 1
+}
+
+put {
+  url: {{baseUrl}}/reservas/{{reservaId}}
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "nomeResponsavel": "QA Bug 2",
+    "descricao": "Apenas mudando descricao de uma reserva ja iniciada",
+    "data": "{{dataHoje}}",
+    "horaInicio": "{{horaPassada}}",
+    "horaFim": "{{horaFuturaFim}}",
+    "salaId": {{salaAtivaId}}
+  }
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:8080
+  reservaId: 1
+  salaAtivaId: 1
+}
+
+script:pre-request {
+  // Cria uma reserva HOJE com horaInicio = horaPassada (uma hora atras)
+  // Para reproduzir manualmente o bug:
+  //   1) crie via POST uma reserva com data=hoje e horaInicio=hora_passada
+  //   2) ou ajuste o relogio para um momento >= horaInicio da reserva
+  //   3) tente este PUT
+}
+
+tests {
+  test("BUG demonstrado: API retorna 400 indevidamente", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+}
+
+docs {
+  REPRODUÇÃO DO BUG #2 (relatório QA).
+  
+  Cenário esperado pelo usuário comum:
+    - Reserva começou as 14:00 e termina as 16:00. Sao 14:30.
+    - Usuario quer corrigir um typo na descricao.
+    - PUT /reservas/{id} mudando apenas descricao.
+  
+  Comportamento real:
+    - validarReserva() rejeita pois horaInicio (14:00) < now (14:30).
+    - Resposta: 400 "Não é possível agendar reserva em horário já passado".
+  
+  Comportamento desejado:
+    - O bloco da linha 126-129 de ReservaService.java deveria
+      rodar SOMENTE no POST, ou ignorar o caso quando os horarios
+      vieram identicos aos ja persistidos.
+  
+  Esta request DEMONSTRA o bug. Para confirmar, ajuste reservaId
+  para uma reserva que JA tenha iniciado (data=hoje, hora_inicio<now).
+}

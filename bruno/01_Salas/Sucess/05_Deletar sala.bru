@@ -1,0 +1,29 @@
+meta {
+  name: 05_Deletar sala
+  type: http
+  seq: 1
+}
+
+delete {
+  url: {{baseUrl}}/salas/{{salaAtivaId}}
+  body: none
+  auth: none
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:8080
+  salaAtivaId: 4
+}
+
+tests {
+  test("status 204", function() {
+    expect(res.getStatus()).to.equal(204);
+  });
+}
+
+docs {
+  ATENÇÃO: rode esta request por último, pois apaga a sala usada pelos
+  testes de reserva. Se a sala tiver reservas associadas, o MySQL vai
+  rejeitar a exclusão por causa da FK e o handler de RuntimeException
+  vai retornar 500 com mensagem técnica (achado #4 do relatório QA).
+}

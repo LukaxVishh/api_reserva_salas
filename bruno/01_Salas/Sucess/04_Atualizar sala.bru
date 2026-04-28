@@ -1,0 +1,36 @@
+meta {
+  name: 04_Atualizar sala
+  type: http
+  seq: 1
+}
+
+put {
+  url: {{baseUrl}}/salas/{{salaAtivaId}}
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "nome": "Sala QA-101 (renomeada)",
+    "bloco": "Bloco QA",
+    "capacidade": 35,
+    "temProjetor": true,
+    "ativa": true
+  }
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:8080
+  salaAtivaId: 1
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("capacidade atualizada", function() {
+    expect(res.getBody().capacidade).to.equal(35);
+  });
+}

@@ -1,0 +1,36 @@
+meta {
+  name: 15_T15 - Delete reserva
+  type: http
+  seq: 7
+}
+
+delete {
+  url: {{baseUrl}}/reservas/{{reservaId}}
+  body: none
+  auth: none
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:8080
+  reservaId: 3
+}
+
+tests {
+  test("T15: reserva em andamento nao pode ser deletada", function() {
+    expect([204, 400]).to.include(res.getStatus());
+  });
+  
+  test("se 400, mensagem explica", function() {
+    if (res.getStatus() === 400) {
+      expect(res.getBody().erro).to.match(/andamento/i);
+    }
+  });
+}
+
+docs {
+  Para reproduzir, reservaId deve apontar para uma reserva cujo
+  intervalo [horaInicio, horaFim] de hoje contenha now().
+  
+  Comportamento esperado: 400 com mensagem
+  "Não é possível excluir uma reserva em andamento."
+}

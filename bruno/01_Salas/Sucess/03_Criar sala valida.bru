@@ -1,0 +1,45 @@
+meta {
+  name: 03_Criar sala valida
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/salas
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "nome": "Sala QA-101",
+    "bloco": "Bloco QA",
+    "capacidade": 30,
+    "temProjetor": true,
+    "ativa": true
+  }
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:8080
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    bru.setEnvVar("salaAtivaId", res.getBody().id);
+  }
+}
+
+tests {
+  test("status 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  
+  test("retornou id", function() {
+    expect(res.getBody()).to.have.property("id");
+  });
+  
+  test("ativa = true", function() {
+    expect(res.getBody().ativa).to.equal(true);
+  });
+}
