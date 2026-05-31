@@ -20,6 +20,14 @@ public class GlobalExceptionHandler {
         return erro;
     }
 
+    @ExceptionHandler(CepInvalidoException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> tratarCepInvalido(CepInvalidoException ex) {
+        Map<String, String> erro = new HashMap<>();
+        erro.put("erro", ex.getMessage());
+        return erro;
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> tratarArgumentoInvalido(IllegalArgumentException ex) {
@@ -37,8 +45,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({
-        MethodArgumentTypeMismatchException.class,
-        HttpMessageNotReadableException.class
+            MethodArgumentTypeMismatchException.class,
+            HttpMessageNotReadableException.class
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> tratarRequisicaoInvalida(Exception ex) {

@@ -28,15 +28,7 @@ public class SalaRepository {
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                Sala sala = new Sala(
-                        rs.getInt("id"),
-                        rs.getString("nome"),
-                        rs.getString("bloco"),
-                        rs.getInt("capacidade"),
-                        rs.getBoolean("tem_projetor"),
-                        rs.getBoolean("ativa")
-                );
-                salas.add(sala);
+                salas.add(mapearSala(rs));
             }
 
         } catch (SQLException e) {
@@ -54,14 +46,7 @@ public class SalaRepository {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return new Sala(
-                            rs.getInt("id"),
-                            rs.getString("nome"),
-                            rs.getString("bloco"),
-                            rs.getInt("capacidade"),
-                            rs.getBoolean("tem_projetor"),
-                            rs.getBoolean("ativa")
-                    );
+                    return mapearSala(rs);
                 }
             }
 
@@ -73,7 +58,22 @@ public class SalaRepository {
     }
 
     public Sala salvar(Sala sala) {
-        String sql = "INSERT INTO salas (nome, bloco, capacidade, tem_projetor, ativa) VALUES (?, ?, ?, ?, ?)";
+        String sql = """
+                INSERT INTO salas (
+                    nome,
+                    bloco,
+                    capacidade,
+                    tem_projetor,
+                    ativa,
+                    cep,
+                    logradouro,
+                    bairro,
+                    cidade,
+                    uf,
+                    numero,
+                    complemento
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """;
 
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, sala.getNome());
@@ -81,6 +81,13 @@ public class SalaRepository {
             stmt.setInt(3, sala.getCapacidade());
             stmt.setBoolean(4, sala.getTemProjetor());
             stmt.setBoolean(5, sala.getAtiva());
+            stmt.setString(6, sala.getCep());
+            stmt.setString(7, sala.getLogradouro());
+            stmt.setString(8, sala.getBairro());
+            stmt.setString(9, sala.getCidade());
+            stmt.setString(10, sala.getUf());
+            stmt.setString(11, sala.getNumero());
+            stmt.setString(12, sala.getComplemento());
 
             stmt.executeUpdate();
 
@@ -97,7 +104,22 @@ public class SalaRepository {
     }
 
     public Sala atualizar(Integer id, Sala sala) {
-        String sql = "UPDATE salas SET nome = ?, bloco = ?, capacidade = ?, tem_projetor = ?, ativa = ? WHERE id = ?";
+        String sql = """
+                UPDATE salas
+                SET nome = ?,
+                    bloco = ?,
+                    capacidade = ?,
+                    tem_projetor = ?,
+                    ativa = ?,
+                    cep = ?,
+                    logradouro = ?,
+                    bairro = ?,
+                    cidade = ?,
+                    uf = ?,
+                    numero = ?,
+                    complemento = ?
+                WHERE id = ?
+                """;
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, sala.getNome());
@@ -105,7 +127,14 @@ public class SalaRepository {
             stmt.setInt(3, sala.getCapacidade());
             stmt.setBoolean(4, sala.getTemProjetor());
             stmt.setBoolean(5, sala.getAtiva());
-            stmt.setInt(6, id);
+            stmt.setString(6, sala.getCep());
+            stmt.setString(7, sala.getLogradouro());
+            stmt.setString(8, sala.getBairro());
+            stmt.setString(9, sala.getCidade());
+            stmt.setString(10, sala.getUf());
+            stmt.setString(11, sala.getNumero());
+            stmt.setString(12, sala.getComplemento());
+            stmt.setInt(13, id);
 
             stmt.executeUpdate();
             sala.setId(id);
@@ -127,5 +156,23 @@ public class SalaRepository {
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao deletar sala.", e);
         }
+    }
+
+    private Sala mapearSala(ResultSet rs) throws SQLException {
+        return new Sala(
+                rs.getInt("id"),
+                rs.getString("nome"),
+                rs.getString("bloco"),
+                rs.getInt("capacidade"),
+                rs.getBoolean("tem_projetor"),
+                rs.getBoolean("ativa"),
+                rs.getString("cep"),
+                rs.getString("logradouro"),
+                rs.getString("bairro"),
+                rs.getString("cidade"),
+                rs.getString("uf"),
+                rs.getString("numero"),
+                rs.getString("complemento")
+        );
     }
 }
