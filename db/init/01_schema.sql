@@ -59,3 +59,10 @@ CREATE TABLE IF NOT EXISTS reservas (
     sala_id          INT          NOT NULL,
     CONSTRAINT fk_reserva_sala FOREIGN KEY (sala_id) REFERENCES salas(id)
 );
+
+CREATE TABLE IF NOT EXISTS eventos_sistema (
+    id         INT PRIMARY KEY AUTO_INCREMENT,
+    tipo       VARCHAR(50)  NOT NULL,
+    payload    TEXT         NOT NULL,
+    criado_em  TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
+);
