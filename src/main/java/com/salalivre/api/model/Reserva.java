@@ -3,8 +3,6 @@ package com.salalivre.api.model;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-
-
 public class Reserva {
 
     private Integer id;
@@ -20,7 +18,7 @@ public class Reserva {
     }
 
     public Reserva(Integer id, String nomeResponsavel, String descricao, LocalDate data,
-                   LocalTime horaInicio, LocalTime horaFim, StatusReserva status, Integer salaId) {
+    LocalTime horaInicio, LocalTime horaFim, StatusReserva status, Integer salaId) {
         this.id = id;
         this.nomeResponsavel = nomeResponsavel;
         this.descricao = descricao;
