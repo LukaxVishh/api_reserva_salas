@@ -1,0 +1,22 @@
+meta {
+  name: 04_Buscar salas proximas horario invalido
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/salas/disponiveis/proximas?cep=01001000&data={{dataAmanha}}&horaInicio=06:00&horaFim=08:00
+  body: none
+  auth: inherit
+}
+
+params:query {
+  cep: 01001000
+  data: {{dataAmanha}}
+  horaInicio: 06:00
+  horaFim: 08:00
+}
+
+settings {
+  encodeUrl: true
+}

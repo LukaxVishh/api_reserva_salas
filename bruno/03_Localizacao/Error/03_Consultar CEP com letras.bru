@@ -1,0 +1,15 @@
+meta {
+  name: 03_Consultar CEP com letras
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/localizacao/cep/abc
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}
