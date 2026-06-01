@@ -2,6 +2,8 @@ package com.salalivre.api.service;
 
 import com.salalivre.api.exception.RecursoNaoEncontradoException;
 import com.salalivre.api.exception.ReservaConflitanteException;
+import com.salalivre.api.messaging.EventPublisher;
+import com.salalivre.api.messaging.ReservaCriadaEvent;
 import com.salalivre.api.model.Reserva;
 import com.salalivre.api.model.Sala;
 import com.salalivre.api.model.StatusReserva;
@@ -23,10 +25,14 @@ public class ReservaService {
 
     private final ReservaRepository reservaRepository;
     private final SalaService salaService;
+    private final EventPublisher eventPublisher;
 
-    public ReservaService(ReservaRepository reservaRepository, SalaService salaService) {
+    public ReservaService(ReservaRepository reservaRepository,
+                          SalaService salaService,
+                          EventPublisher eventPublisher) {
         this.reservaRepository = reservaRepository;
         this.salaService = salaService;
+        this.eventPublisher = eventPublisher;
     }
 
     public List<Reserva> listarTodas() {
@@ -59,7 +65,18 @@ public class ReservaService {
         validarConflito(reserva, null);
 
         reserva.setStatus(calcularStatus(reserva));
-        return reservaRepository.salvar(reserva);
+        Reserva salva = reservaRepository.salvar(reserva);
+
+        eventPublisher.publicarReservaCriada(new ReservaCriadaEvent(
+                salva.getId(),
+                salva.getSalaId(),
+                salva.getNomeResponsavel(),
+                salva.getData(),
+                salva.getHoraInicio(),
+                salva.getHoraFim()
+        ));
+
+        return salva;
     }
 
     public Reserva atualizar(Integer id, Reserva reserva) {

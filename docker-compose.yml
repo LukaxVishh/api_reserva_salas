@@ -21,6 +21,25 @@ services:
     networks:
       - salalivre
 
+  rabbitmq:
+    image: docker.io/library/rabbitmq:3-management
+    container_name: salalivre-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+    networks:
+      - salalivre
+
   api:
     image: docker.io/library/maven:3.9-eclipse-temurin-17
     container_name: salalivre-api
@@ -40,10 +59,16 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/salalivre?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Sao_Paulo
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: rootroot
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
     ports:
       - "8080:8080"
     depends_on:
       mysql:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
     command: ["mvn", "spring-boot:run"]
     networks:

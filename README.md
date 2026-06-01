@@ -313,13 +313,57 @@ Objetivo:
 
 ## 12) Como Executar o Projeto
 
-### 1. Clonar o repositório
+### Opção 1: Com Docker/Podman (Recomendado)
+
+Esta é a forma mais fácil de rodar a aplicação com MySQL e RabbitMQ.
+
+#### Pré-requisitos
+
+- Docker ou Podman instalado
+- Docker Compose instalado
+
+#### Executar com script
+
+```bash
+./scripts/start.sh
+```
+
+#### Ou manualmente
+
+```bash
+docker compose up
+```
+
+A aplicação iniciará automaticamente e estará disponível em:
+
+- **API**: http://localhost:8080
+- **RabbitMQ Management**: http://localhost:15672
+  - Usuário: `guest`
+  - Senha: `guest`
+
+#### Parar a aplicação
+
+```bash
+./scripts/stop.sh
+```
+
+Ou:
+
+```bash
+docker compose down
+```
+
+---
+
+### Opção 2: Localmente (sem Docker)
+
+#### 1. Clonar o repositório
 
 ```bash
 git clone <url-do-repositorio>
 ```
 
-### 2. Abrir o projeto na IDE
+#### 2. Abrir o projeto na IDE
 
 Opções sugeridas:
 
@@ -327,34 +371,59 @@ Opções sugeridas:
 - IntelliJ IDEA
 - Eclipse
 
-### 3. Criar o banco no MySQL
+#### 3. Instalar MySQL
+
+Se ainda não possui o MySQL instalado:
+
+- **Windows**: instale via [MySQL Community Server](https://dev.mysql.com/downloads/mysql/)
+- **macOS**: use Homebrew: `brew install mysql`
+- **Linux**: `sudo apt-get install mysql-server`
+
+#### 4. Criar o banco de dados
 
 ```sql
 CREATE DATABASE salalivre;
 USE salalivre;
 ```
 
-### 4. Criar as tabelas
+#### 5. Criar as tabelas
 
 Execute os comandos SQL deste README para as tabelas salas e reservas.
 
-### 5. Observação
+#### 6. Configurar RabbitMQ (Opcional para dev local)
 
-```Caso esteja utilizando MAMP, a porta padrão do MySQL pode ser 8889:
+Se quiser testar a funcionalidade de RabbitMQ localmente:
+
+- Instale o [RabbitMQ](https://www.rabbitmq.com/download.html)
+- Ou use Docker apenas para RabbitMQ:
+
+```bash
+docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+```
+
+#### 7. Configurar application.properties
+
+Caso esteja utilizando MAMP ou configurações customizadas, edite `src/main/resources/application.properties`:
 
 ```properties
 spring.datasource.url=jdbc:mysql://127.0.0.1:8889/salalivre
 spring.datasource.username=root
 spring.datasource.password=root
+
+# RabbitMQ
+spring.rabbitmq.host=localhost
+spring.rabbitmq.port=5672
+spring.rabbitmq.username=guest
+spring.rabbitmq.password=guest
 ```
 
-### 6. Rodar a aplicação
+#### 8. Rodar a aplicação
 
 Execute a classe principal:
 
 SalaLivreApiApplication
 
-### 7. Testar endpoint inicial
+#### 9. Testar endpoint inicial
 
 ```http
 GET http://localhost:8080/salas
