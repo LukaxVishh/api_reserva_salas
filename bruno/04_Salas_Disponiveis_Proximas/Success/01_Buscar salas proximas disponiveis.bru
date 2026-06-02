@@ -17,6 +17,47 @@ params:query {
   horaFim: 16:00
 }
 
-settings {
-  encodeUrl: true
+vars:pre-request {
+  baseUrl: http://localhost:8081
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("retorna array", function() {
+    expect(res.getBody()).to.be.an("array");
+  });
+
+  test("retornou salas disponiveis (seed tem 2 ativas com CEP)", function() {
+    expect(res.getBody().length).to.be.at.least(1);
+  });
+
+  test("cada sala tem distanciaAproximadaKm", function() {
+    res.getBody().forEach(function(sala) {
+      expect(sala).to.have.property("distanciaAproximadaKm");
+    });
+  });
+
+  test("cada sala tem classificacaoProximidade", function() {
+    res.getBody().forEach(function(sala) {
+      expect(sala.classificacaoProximidade).to.match(/MUITO_PROXIMA|PROXIMA|MEDIA|DISTANTE/);
+    });
+  });
+
+  test("resultados ordenados por distancia crescente", function() {
+    const distancias = res.getBody().map(function(s) { return s.distanciaAproximadaKm; });
+    for (var i = 1; i < distancias.length; i++) {
+      expect(distancias[i]).to.be.at.least(distancias[i - 1]);
+    }
+  });
+}
+
+docs {
+  CEP de origem: 01001000 (Praca da Se, Se, Sao Paulo - SP)
+  Seed tem 2 salas ativas com CEP:
+    - Sala 101: mesma cidade/bairro -> MUITO_PROXIMA (2km)
+    - Sala 102: mesma cidade, bairro diferente -> PROXIMA (8km)
+  Resultado esperado: lista com 2 itens, Sala 101 primeiro.
 }

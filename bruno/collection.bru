@@ -34,15 +34,24 @@ docs {
     horaPassada, horaFuturaInicio, horaFuturaFim
 
   Variáveis de ambiente (Local.bru):
-    baseUrl              -> http://localhost:8080
+    baseUrl              -> http://localhost:8081
     salaAtivaId          -> setado após "Criar sala valida (T1)"
     salaInativaId        -> setado após "Criar sala inativa"
     reservaId            -> setado após "Criar reserva valida (T4)"
     reservaConflitoId    -> setado após "Setup conflito"
+    reservaRabbitId      -> setado após "Gerar evento reserva criada"
+
+  Grupos da collection:
+    01_Salas                        CRUD de salas (inclui CEP opcional)
+    02_Reservas                     CRUD de reservas + regras de negócio
+    03_Localizacao                  Consulta de CEP via ViaCep
+    04_Salas_Disponiveis_Proximas   Busca por disponibilidade + proximidade geográfica
+    05_RabbitMQ_Auditoria           Triggers de eventos assíncronos via RabbitMQ
 
   Ordem sugerida para rodar a collection inteira:
-    1. 01_Salas/03_Criar sala valida (T1)
-    2. 01_Salas/08_Criar sala inativa (suporte)
-    3. 02_Reservas/04_T4 - Criar reserva valida
+    1. 01_Salas/Success/03_Criar sala valida (T1)
+    2. 01_Salas/Success/08_Criar sala inativa (suporte)
+    3. 02_Reservas/Success/04_T4 - Criar reserva valida
     4. demais testes em ordem
+    5. 05_RabbitMQ_Auditoria por último (depende de salaAtivaId)
 }

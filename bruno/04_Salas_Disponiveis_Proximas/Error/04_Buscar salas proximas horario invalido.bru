@@ -5,7 +5,7 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/salas/disponiveis/proximas?cep=01001000&data={{dataAmanha}}&horaInicio=06:00&horaFim=08:00
+  url: {{baseUrl}}/salas/disponiveis/proximas?cep=01001000&data={{dataAmanha}}&horaInicio=14:00&horaFim=14:00
   body: none
   auth: inherit
 }
@@ -13,10 +13,30 @@ get {
 params:query {
   cep: 01001000
   data: {{dataAmanha}}
-  horaInicio: 06:00
-  horaFim: 08:00
+  horaInicio: 14:00
+  horaFim: 14:00
 }
 
-settings {
-  encodeUrl: true
+vars:pre-request {
+  baseUrl: http://localhost:8081
+}
+
+tests {
+  test("horaFim igual horaInicio -> 200 com lista vazia", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("lista vazia quando horaFim nao e depois de horaInicio", function() {
+    expect(res.getBody()).to.be.an("array").that.is.empty;
+  });
+}
+
+docs {
+  O service retorna lista vazia (nao erro) quando horaFim <= horaInicio.
+  Comportamento definido em SalaDisponibilidadeService:
+    if (!horaFim.isAfter(horaInicio)) return List.of();
+
+  ATENCAO: 06:00-08:00 e um horario VALIDO para busca de disponibilidade
+  (o service nao limita horario de funcionamento, so o ReservaService faz isso).
+  Portanto o teste usa horaFim=horaInicio para provocar a lista vazia.
 }

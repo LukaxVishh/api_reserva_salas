@@ -17,6 +17,26 @@ params:query {
   horaFim: 18:00
 }
 
-settings {
-  encodeUrl: true
+vars:pre-request {
+  baseUrl: http://localhost:8081
+}
+
+tests {
+  test("busca de salas proximas -> 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("retorna array (evento BuscaSalasProximasEvent foi publicado)", function() {
+    expect(res.getBody()).to.be.an("array");
+  });
+}
+
+docs {
+  Buscar salas proximas dispara BuscaSalasProximasEvent via EventPublisher.
+  O evento e consumido e persistido em eventos_sistema.
+  Este teste verifica que o endpoint responde 200;
+  o evento RabbitMQ acontece de forma assincrona em background.
+
+  Para confirmar a auditoria: conectar ao MySQL e executar:
+    SELECT * FROM eventos_sistema ORDER BY id DESC LIMIT 5;
 }

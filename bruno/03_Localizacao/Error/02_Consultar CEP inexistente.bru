@@ -5,12 +5,25 @@ meta {
 }
 
 get {
-  url: 
+  url: {{baseUrl}}/localizacao/cep/99999999
   body: none
   auth: inherit
 }
 
-settings {
-  encodeUrl: true
-  timeout: 0
+vars:pre-request {
+  baseUrl: http://localhost:8081
+}
+
+tests {
+  test("CEP inexistente -> 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+
+  test("body tem campo erro", function() {
+    expect(res.getBody()).to.have.property("erro");
+  });
+
+  test("mensagem menciona CEP invalido ou nao encontrado", function() {
+    expect(res.getBody().erro).to.match(/cep|inv.lido|encontrado/i);
+  });
 }

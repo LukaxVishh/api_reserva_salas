@@ -17,6 +17,20 @@ params:query {
   horaFim: 16:00
 }
 
-settings {
-  encodeUrl: true
+vars:pre-request {
+  baseUrl: http://localhost:8081
+}
+
+tests {
+  test("CEP invalido -> 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+
+  test("body tem campo erro", function() {
+    expect(res.getBody()).to.have.property("erro");
+  });
+
+  test("mensagem menciona CEP", function() {
+    expect(res.getBody().erro).to.match(/cep|n.meros/i);
+  });
 }
