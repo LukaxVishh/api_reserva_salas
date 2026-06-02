@@ -17,6 +17,26 @@ params:query {
   horaFim: 18:00
 }
 
-settings {
-  encodeUrl: true
+vars:pre-request {
+  baseUrl: http://localhost:8081
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("retorna array", function() {
+    expect(res.getBody()).to.be.an("array");
+  });
+
+  test("salas adjacentes a reserva anterior ainda aparecem (sem conflito)", function() {
+    expect(res.getBody().length).to.be.at.least(1);
+  });
+}
+
+docs {
+  Horario 16:00-18:00 e adjacente ao slot 14:00-16:00 (T4).
+  A regra de overlap usa < / >, entao adjacencia nao e conflito.
+  Ambas as salas ativas devem aparecer no resultado.
 }

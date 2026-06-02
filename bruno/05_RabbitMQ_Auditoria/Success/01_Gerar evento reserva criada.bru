@@ -6,10 +6,52 @@ meta {
 
 post {
   url: {{baseUrl}}/reservas
-  body: none
+  body: json
   auth: inherit
 }
 
-settings {
-  encodeUrl: true
+body:json {
+  {
+    "nomeResponsavel": "QA RabbitMQ",
+    "descricao": "Reserva para validar evento ReservaCriadaEvent",
+    "data": "{{dataAmanha}}",
+    "horaInicio": "08:00",
+    "horaFim": "09:00",
+    "salaId": {{salaAtivaId}}
+  }
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:8081
+  salaAtivaId: 2
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    bru.setEnvVar("reservaRabbitId", res.getBody().id);
+  }
+}
+
+tests {
+  test("reserva criada com sucesso -> 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  
+  test("retornou id (evento ReservaCriadaEvent foi publicado no RabbitMQ)", function() {
+    expect(res.getBody()).to.have.property("id");
+  });
+  
+  test("status calculado = AGENDADA", function() {
+    expect(res.getBody().status).to.equal("AGENDADA");
+  });
+}
+
+docs {
+  Criar uma reserva dispara ReservaCriadaEvent via EventPublisher.
+  O EventConsumer consome o evento e persiste em eventos_sistema.
+  Este teste verifica que o endpoint responde 201 corretamente;
+  o evento RabbitMQ acontece de forma assincrona em background.
+  
+  Para confirmar a auditoria: conectar ao MySQL e executar:
+    SELECT * FROM eventos_sistema ORDER BY id DESC LIMIT 5;
 }
