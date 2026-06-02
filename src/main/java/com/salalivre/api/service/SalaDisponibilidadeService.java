@@ -1,6 +1,8 @@
 // java
 package com.salalivre.api.service;
 
+import com.salalivre.api.messaging.BuscaSalasProximasEvent;
+import com.salalivre.api.messaging.EventPublisher;
 import com.salalivre.api.model.Sala;
 import com.salalivre.api.model.Reserva;
 import com.salalivre.api.model.SalaDisponivelProximaResponse;
@@ -31,6 +33,9 @@ public class SalaDisponibilidadeService {
 
     @Autowired
     private DistanciaService distanciaService;
+
+    @Autowired
+    private EventPublisher eventPublisher;
 
     public List<SalaDisponivelProximaResponse> buscarSalasProximasDisponiveis(
             String cepOrigem,
@@ -89,6 +94,11 @@ public class SalaDisponibilidadeService {
         }
 
         result.sort(Comparator.comparingDouble(SalaDisponivelProximaResponse::getDistanciaAproximadaKm));
+
+        eventPublisher.publicarBuscaSalasProximas(new BuscaSalasProximasEvent(
+                cepOrigem, data, horaInicio, horaFim, result.size()
+        ));
+
         return result;
     }
 }
