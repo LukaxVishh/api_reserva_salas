@@ -1,0 +1,22 @@
+meta {
+  name: 02_Gerar evento busca salas proximas
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/salas/disponiveis/proximas?cep=01001000&data={{dataAmanha}}&horaInicio=16:00&horaFim=18:00
+  body: none
+  auth: inherit
+}
+
+params:query {
+  cep: 01001000
+  data: {{dataAmanha}}
+  horaInicio: 16:00
+  horaFim: 18:00
+}
+
+settings {
+  encodeUrl: true
+}

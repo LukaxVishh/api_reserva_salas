@@ -1,0 +1,15 @@
+meta {
+  name: 01_Gerar evento reserva criada
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/reservas
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

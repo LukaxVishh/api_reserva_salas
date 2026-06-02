@@ -1,0 +1,22 @@
+meta {
+  name: 01_Buscar salas proximas disponiveis
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/salas/disponiveis/proximas?cep=01001000&data={{dataAmanha}}&horaInicio=14:00&horaFim=16:00
+  body: none
+  auth: inherit
+}
+
+params:query {
+  cep: 01001000
+  data: {{dataAmanha}}
+  horaInicio: 14:00
+  horaFim: 16:00
+}
+
+settings {
+  encodeUrl: true
+}
